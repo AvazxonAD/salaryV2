@@ -1,7 +1,7 @@
 const asyncHandler = require('../middleware/async.js')
 const ErrorResponse = require('../utils/errorResponse.js')
 const Master = require('../models/master.model.js')
-
+const AdminKey = require('../models/admin.status.js')
 
 //register 
 exports.register = asyncHandler(async (req, res, next) => {
@@ -35,12 +35,12 @@ exports.login = asyncHandler(async (req, res, next) => {
     const token = user.jwtToken()
     return res.status(200).json({success : true, data : user, token})
 })
-// get user by id 
+// get user 
 exports.userOpen = asyncHandler(async (req, res, next) => {
     let userAdmin
-    const user = await Master.findById(req.params.id).select("username passwordInfo")
+    const user = await Master.findById(req.user.id).select("username passwordInfo adminStatus")
     if(user.adminStatus){
-        const users = await Master.find().select("username passwordInfo")
+        const users = await Master.find({adminStatus : false}).select("username passwordInfo")
         return res.status(200).json({success : true, admin : user, users})
     }
     if(!user){
@@ -50,7 +50,7 @@ exports.userOpen = asyncHandler(async (req, res, next) => {
 }) 
 // // update password 
 exports.updatePassword = asyncHandler(async (req, res, next) => {
-    const user = await Master.findById(req.params.id)
+    const user = await Master.findById(req.user.id)
     if(!user){
         return next(new ErrorResponse("server xatolik", 500))
     }
@@ -72,5 +72,17 @@ exports.updatePassword = asyncHandler(async (req, res, next) => {
 })
 // status admin 
 exports.statusAdmin = asyncHandler(async (req, res, next) => {
-    
+    const adminKey = await AdminKey.findOne()
+    const {keyPassword} = req.body
+    const match = await adminKey.matchPassword(keyPassword.trim())
+    if(!match){
+        return next(new ErrorResponse('Siz admin parolini notog\'ri kiritdinggiz', 403))
+    }
+    const master = await Master.findById(req.user.id)
+    if(master.adminStatus){
+        return next(new ErrorResponse("Siz allaqachon admin bolgansiz", 403))
+    }
+    master.adminStatus = true
+    await master.save()
+    return res.status(200).json({success : true, message : "Siz muvaffiqyatli admin boldinggiz"})
 })

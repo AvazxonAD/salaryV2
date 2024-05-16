@@ -2,7 +2,7 @@ const express = require('express')
 const connectDB = require("./config/db")
 const errorHandler = require('./middleware/errorHandler')
 const colors = require('colors')
-
+const adminKey = require('./utils/create.admin.key')
 
 const dotenv = require('dotenv')
 dotenv.config()
@@ -16,6 +16,7 @@ app.use(express.urlencoded({extended : false}))
 const PORT = process.env.PORT || 3000
 
 connectDB()
+adminKey()
 
 app.use('/auth', require('./router/auth.router'))
 

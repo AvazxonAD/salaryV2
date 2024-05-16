@@ -22,11 +22,6 @@ const masterSchema = new mongoose.Schema({
     adminStatus : {
         type : Boolean,
         default : false
-    },
-    statusAdminKey : {
-        type : String,
-        default : "AdminKey+1201",
-        trim : true
     }
 }, {timestamps : true})
 
