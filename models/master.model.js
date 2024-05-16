@@ -26,6 +26,14 @@ const masterSchema = new mongoose.Schema({
     ranks : [{
         type : mongoose.Schema.Types.ObjectId,
         ref : "Rank"
+    }],
+    locations : [{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "Location"
+    }],
+    positions : [{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "Position"
     }]
 }, {timestamps : true})
 

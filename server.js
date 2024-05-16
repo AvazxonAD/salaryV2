@@ -3,6 +3,7 @@ const connectDB = require("./config/db")
 const errorHandler = require('./middleware/errorHandler')
 const colors = require('colors')
 const adminKey = require('./utils/create.admin.key')
+const minimum = require('./utils/create.minimum')
 const cors = require('cors')
 const dotenv = require('dotenv')
 dotenv.config()
@@ -18,9 +19,14 @@ const PORT = process.env.PORT || 3000
 
 connectDB()
 adminKey()
+minimum()
 
 app.use('/auth', require('./router/auth.router'))
 app.use("/rank", require("./router/rank.router"))
+app.use('/location', require('./router/location.router'))
+app.use('/position', require('./router/position.router'))
+
+
 
 app.use(errorHandler)
 

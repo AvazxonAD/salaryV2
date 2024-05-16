@@ -10,10 +10,6 @@ exports.createRank = asyncHandler(async (req, res, next) => {
         return next(new ErrorResponse("Sorovlar bosh qolmasligi kerak", 403))
     }
     let result = []
-    const parent = await  Master.findById(req.user.id)
-    if(!parent){
-        return next(new ErrorResponse('Server xatolik', 403))
-    }
     for(let rank of ranks){
         if(!rank.name || rank.summa == null){
             return next(new ErrorResponse('Sorovlar bosh qolmasligi kerak', 403))
@@ -22,22 +18,27 @@ exports.createRank = asyncHandler(async (req, res, next) => {
         if(test){
             return next(new ErrorResponse("Bu unvonni oldin kiritgansiz",403))
         }
+    }
+    for(let rank of ranks){
         const newRank = await Rank.create({name : rank.name, summa : rank.summa, parent : req.user.id})
-        parent.ranks.push(newRank._id)
-        await parent.save()
+        await Master.findByIdAndUpdate(req.user.id, {$push : {ranks : newRank._id}})
         result.push(newRank)
     }
     return res.status(200).json({success : true, data : result})
 })
 // get all rank 
 exports.getAllRank =asyncHandler(async (req, res, next) => {
-    const ranks = await Rank.find({parent : req.user.id})
+    const ranks = await Rank.find({parent : req.user.id}).sort({name : 1})
     return res.status(200).json({success : true, data : ranks})
 
 })
 // delete ranks
 exports.deleteRank = asyncHandler(async (req, res, next) => {
-    await Rank.findByIdAndDelete(req.params.id)
-    await Master.updateMany({$pull : {ranks : req.params.id}})
+    const rank = await Rank.findByIdAndDelete(req.params.id)
+    if(!rank){
+        return next(new ErrorResponse("Unvon topilmadi", 403))
+    }
+    const master = await Master.updateMany({$pull : {ranks : req.params.id}}, {new : true})
+    if(master)
     return res.status(200).json({success : true, data : "Delete"})
 })
