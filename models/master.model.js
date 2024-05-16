@@ -22,7 +22,11 @@ const masterSchema = new mongoose.Schema({
     adminStatus : {
         type : Boolean,
         default : false
-    }
+    },
+    ranks : [{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "Rank"
+    }]
 }, {timestamps : true})
 
 // Parolni hashlash
