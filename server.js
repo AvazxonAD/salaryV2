@@ -25,8 +25,8 @@ app.use('/auth', require('./router/auth.router'))
 app.use("/rank", require("./router/rank.router"))
 app.use('/location', require('./router/location.router'))
 app.use('/position', require('./router/position.router'))
-
-
+app.use('/minimum', require('./router/minimum.router'))
+app.use('/worker', require('./router/worker.router'))
 
 app.use(errorHandler)
 

@@ -26,6 +26,9 @@ exports.login = asyncHandler(async (req, res, next) => {
         return next(new ErrorResponse("Sorovlar bosh qolmasligi kerak", 403))
     }
     const user = await Master.findOne({username : username.trim()})
+    if(!user){
+        return next(new ErrorResponse('Username yoki password hato kiritildi', 403))
+    }
     if(user){
         const match = await user.matchPassword(password)
         if(!match){

@@ -34,6 +34,10 @@ const masterSchema = new mongoose.Schema({
     positions : [{
         type : mongoose.Schema.Types.ObjectId,
         ref : "Position"
+    }],
+    workers : [{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "Worker"
     }]
 }, {timestamps : true})
 
@@ -54,7 +58,7 @@ masterSchema.methods.matchPassword = async function(password) {
 
 // JWT belgisini olish
 masterSchema.methods.jwtToken = function() {
-    return jwt.sign({id: this._id, name: this.name}, process.env.JWT_TOKEN_SECRET, {
+    return jwt.sign({id: this._id, name: this.name, admin : this.adminStatus}, process.env.JWT_TOKEN_SECRET, {
         expiresIn: process.env.JWT_EXPIRE
     });
 };

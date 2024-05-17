@@ -33,4 +33,21 @@ exports.createPosition = asyncHandler(async (req, res, next) => {
     }
     return res.status(200).json({success : true, data : result})
 })
+// get all position 
+exports.getAllPosition = asyncHandler(async (req, res, next) => {
+    const positions = await Position.find({parent : req.user.id})
+    return res.status(200).json({success : true, data : positions})
+})
+// delete position 
+exports.deletePosition = asyncHandler(async (req, res, next) => {
+    const position = await Position.findByIdAndDelete(req.params.id)
+    if(!position){
+        return next(new ErrorResponse("Lavozim topilmadi", 500))
+    }
+    const master = await Master.findByIdAndUpdate(req.user.id, {$pull : {positions : req.params.id}})
+    if(!master){
+        return next(new ErrorResponse('Server xatolik', 500))
+    }
+    return res.status(200).json({success : true, data : "Delete"})
+})
 
