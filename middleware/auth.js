@@ -1,21 +1,42 @@
-const jwt = require('jsonwebtoken')
-const asyncHandler = require('../middleware/async.js')
-const ErrorResponse = require('../utils/errorResponse')
+const jwt = require('jsonwebtoken');
+const asyncHandler = require('../middleware/async.js');
+const ErrorResponse = require('../utils/errorResponse');
 
-// authorization 
 exports.protect = asyncHandler(async (req, res, next) => {
-    let token 
-    if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
-        token = req.headers.authorization.split(' ')[1]
-    }
-    if(!token){
-        return next(new ErrorResponse('Siz tizimga kirmagansiz', 403))
-    }
-    const decoded = jwt.verify(token, process.env.JWT_TOKEN_SECRET)
+    let token;
 
-    req.user = decoded
-    if(!req.user){
-        return next(new ErrorResponse("Siz tizimga kirmagansiz", 403))
+    // Foydalanuvchidan tokenni olamiz
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+        token = req.headers.authorization.split(' ')[1];
     }
-    next()
-})
+
+    // Agar token mavjud bo'lmasa
+    if (!token) {
+        return next(new ErrorResponse('Siz tizimga kirmagansiz', 403));
+    }
+
+    try {
+        // Tokenni tekshiramiz
+        const decoded = jwt.verify(token, process.env.JWT_TOKEN_SECRET);
+        
+        // Agar token yaroqsiz bo'lsa
+        if (!decoded) {
+            return next(new ErrorResponse("Siz tizimga kirmagansiz", 403));
+        }
+
+        // Tokenning amal qilish muddatini tekshiramiz
+        const currentTimestamp = Math.floor(Date.now() / 1000); // Joriy vaqt
+        if (decoded.exp && decoded.exp < currentTimestamp) {
+            return next(new ErrorResponse("Token muddati tugagan", 403));
+        }
+
+        // Foydalanuvchi ma'lumotlarini saqlaymiz
+        req.user = decoded;
+
+        // Keyingi middleware'ga o'tamiz
+        next();
+    } catch (err) {
+        // Xatolikni qaytarib yuboramiz
+        return next(new ErrorResponse('Token eskirgan yoki yaroqsiz', 403));
+    }
+});
