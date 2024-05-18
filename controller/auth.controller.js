@@ -87,5 +87,7 @@ exports.statusAdmin = asyncHandler(async (req, res, next) => {
     }
     master.adminStatus = true
     await master.save()
-    return res.status(200).json({success : true, message : "Siz muvaffiqyatli admin boldinggiz"})
+    const token = master.jwtToken()
+
+    return res.status(200).json({success : true, message : "Siz muvaffiqyatli admin boldinggiz", token})
 })
