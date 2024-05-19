@@ -2,6 +2,7 @@ const asyncHandler = require('../middleware/async.js')
 const ErrorResponse = require('../utils/errorResponse.js')
 const Master = require('../models/master.model.js')
 const AdminKey = require('../models/admin.status.js')
+const Folder = require('../models/folder.model.js')
 
 //register 
 exports.register = asyncHandler(async (req, res, next) => {
@@ -38,18 +39,19 @@ exports.login = asyncHandler(async (req, res, next) => {
     const token = user.jwtToken()
     return res.status(200).json({success : true, data : user, token})
 })
-// get user 
+// get user open 
 exports.userOpen = asyncHandler(async (req, res, next) => {
     let userAdmin
     const user = await Master.findById(req.user.id).select("username passwordInfo adminStatus")
+    const folders = await Folder.find({parent : user._id}).sort({name : 1})
     if(user.adminStatus){
-        const users = await Master.find({adminStatus : false}).select("username passwordInfo")
-        return res.status(200).json({success : true, admin : user, users})
+        const users = await Master.find({adminStatus : false}).select("username passwordInfo").sort({name : 1})
+        return res.status(200).json({success : true, admin : user, users, folders})
     }
     if(!user){
         return next(new ErrorResponse("Server xatolik", 403))
     }
-    return res.status(200).json({success : true, data : user})
+    return res.status(200).json({success : true, data : user, folders})
 }) 
 // // update password 
 exports.updatePassword = asyncHandler(async (req, res, next) => {

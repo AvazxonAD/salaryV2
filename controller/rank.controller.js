@@ -6,7 +6,7 @@ const Rank = require('../models/rank.model')
 // create new rank 
 exports.createRank = asyncHandler(async (req, res, next) => {
     const {ranks} = req.body
-    if(!ranks || ranks.length < 1){
+    if(!ranks || ranks.length === 0){
         return next(new ErrorResponse("Sorovlar bosh qolmasligi kerak", 403))
     }
     let result = []
@@ -16,7 +16,7 @@ exports.createRank = asyncHandler(async (req, res, next) => {
         }
         const test = await Rank.findOne({name : rank.name.trim(), parent : req.user.id})
         if(test){
-            return next(new ErrorResponse("Bu unvonni oldin kiritgansiz",403))
+            return next(new ErrorResponse(`Bu unvonni oldin kiritgansiz ${test.name}`,403))
         }
     }
     for(let rank of ranks){

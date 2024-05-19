@@ -38,6 +38,10 @@ const masterSchema = new mongoose.Schema({
     workers : [{
         type : mongoose.Schema.Types.ObjectId,
         ref : "Worker"
+    }],
+    folders : [{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "Folder"
     }]
 }, {timestamps : true})
 
