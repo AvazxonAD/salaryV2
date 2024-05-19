@@ -42,7 +42,7 @@ exports.deleteLocation = asyncHandler(async (req, res, next) => {
     if(!location){
         return next(new ErrorResponse("Joylashuv topilmadi", 403))
     }
-    const master = await Master.findByIdAndUpdate(req.user.id, {$pull : {locations : req.params.id}}, {new : true})
+    const master = await Master.findByIdAndUpdate(req.user.id, {locations : req.params.id}, {$pull : {locations : req.params.id}}, {new : true})
     if(!master){
         return next(new ErrorResponse('Foydalanuvchi topilmadi', 403))
     }

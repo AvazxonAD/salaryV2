@@ -54,7 +54,7 @@ exports.deleteWorker = asyncHandler(async (req, res, next) => {
     if(!worker){
         return next(new ErrorResponse("Fuqaro topilmadi", 403))
     }
-    const worker2 = await Master.findByIdAndUpdate(req.user.id, {$pull : {workers : req.params.id}})
+    const worker2 = await Master.findByIdAndUpdate(req.user.id, {workers : req.params.id}, {$pull : {workers : req.params.id}}, {new : true})
     if(!worker2){
         return next(new ErrorResponse("Fuqaro topilmadi", 403))
     }

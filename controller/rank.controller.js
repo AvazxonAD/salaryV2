@@ -16,7 +16,7 @@ exports.createRank = asyncHandler(async (req, res, next) => {
         }
         const test = await Rank.findOne({name : rank.name.trim(), parent : req.user.id})
         if(test){
-            return next(new ErrorResponse(`Bu unvonni oldin kiritgansiz ${test.name}`,403))
+            return next(new ErrorResponse(`Bu unvonni oldin kiritgansiz : ${test.name}`,403))
         }
     }
     for(let rank of ranks){
@@ -37,7 +37,8 @@ exports.deleteRank = asyncHandler(async (req, res, next) => {
     const rank = await Rank.findById(req.params.id)
     const master = await Master.updateMany(
         { ranks: rank.id },  // Qidiruv mezonlari
-        { $pull: { ranks: rank.id } }  // Yangilanish operatsiyasi
+        { $pull: { ranks: rank.id } },  // Yangilanish operatsiyasi
+        {new : true}
     );
     await rank.deleteOne()
 

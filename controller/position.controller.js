@@ -18,7 +18,7 @@ exports.createPosition = asyncHandler(async (req, res, next) => {
         }
         const test = await Position.findOne({name : position.name, parent : req.user.id})
         if(test){
-            return next(new ErrorResponse('Siz bu lavozimni oldin kiritgansiz', 403))
+            return next(new ErrorResponse(`Siz bu lavozimni oldin kiritgansiz : ${test.name}`, 403))
         }
     }
     for(let position of positions){
@@ -44,7 +44,7 @@ exports.deletePosition = asyncHandler(async (req, res, next) => {
     if(!position){
         return next(new ErrorResponse("Lavozim topilmadi", 500))
     }
-    const master = await Master.findByIdAndUpdate(req.user.id, {$pull : {positions : req.params.id}})
+    const master = await Master.findByIdAndUpdate(req.user.id, {positions : req.params.id}, {$pull : {positions : req.params.id}}, {new : true})
     if(!master){
         return next(new ErrorResponse('Server xatolik', 500))
     }
