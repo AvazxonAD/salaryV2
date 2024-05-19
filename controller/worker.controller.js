@@ -28,6 +28,13 @@ exports.createWorker = asyncHandler(async (req, res, next) => {
         }
     }
     for(let worker of workers){
+        const now = new Date();
+        // Hozirgi yil, oy va kunni olish
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0'); // Oylarda 0 dan boshlanganligi uchun 1 qo'shamiz
+        const day = String(now.getDate()).padStart(2, '0');
+        const createDate = `${year}-${month}-${day}`;
+
         const newWorker = await Worker.create({
             FIOlotin : worker.FIOlotin,
             FIOkril : worker.FIOkril,
@@ -36,7 +43,8 @@ exports.createWorker = asyncHandler(async (req, res, next) => {
             plastic : worker.plastic,
             dateOfEmployment : worker.dateOfEmployment,
             budget : worker.budget,
-            parent : req.user.id
+            parent : req.user.id,
+            date : createDate
         })
         result.push(newWorker)
         await Master.findByIdAndUpdate(req.user.id, {$push : {workers : newWorker._id}}, {new : true})

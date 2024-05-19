@@ -10,6 +10,7 @@ exports.createRank = asyncHandler(async (req, res, next) => {
         return next(new ErrorResponse("Sorovlar bosh qolmasligi kerak", 403))
     }
     let result = []
+    let date
     for(let rank of ranks){
         if(!rank.name || rank.summa == null){
             return next(new ErrorResponse('Sorovlar bosh qolmasligi kerak', 403))
@@ -20,7 +21,14 @@ exports.createRank = asyncHandler(async (req, res, next) => {
         }
     }
     for(let rank of ranks){
-        const newRank = await Rank.create({name : rank.name, summa : rank.summa, parent : req.user.id})
+        const now = new Date();
+        // Hozirgi yil, oy va kunni olish
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0'); // Oylarda 0 dan boshlanganligi uchun 1 qo'shamiz
+        const day = String(now.getDate()).padStart(2, '0');
+        const createDate = `${year}-${month}-${day}`;
+
+        const newRank = await Rank.create({name : rank.name, summa : rank.summa, parent : req.user.id, date : createDate})
         await Master.findByIdAndUpdate(req.user.id, {$push : {ranks : newRank._id}})
         result.push(newRank)
     }

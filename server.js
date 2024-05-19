@@ -27,6 +27,7 @@ app.use('/location', require('./router/location.router'))
 app.use('/position', require('./router/position.router'))
 app.use('/minimum', require('./router/minimum.router'))
 app.use('/worker', require('./router/worker.router'))
+app.use('/folder', require('./router/folder.router'))
 
 app.use(errorHandler)
 

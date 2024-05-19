@@ -22,11 +22,19 @@ exports.createPosition = asyncHandler(async (req, res, next) => {
         }
     }
     for(let position of positions){
+        const now = new Date();
+        // Hozirgi yil, oy va kunni olish
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0'); // Oylarda 0 dan boshlanganligi uchun 1 qo'shamiz
+        const day = String(now.getDate()).padStart(2, '0');
+        const createDate = `${year}-${month}-${day}`;
+        
         const newPosition = await Position.create({
             name : position.name,
             percent : position.percent,
             salary : position.percent * minimum.summa,
-            parent : req.user.id
+            parent : req.user.id,
+            date : createDate
         })
         await Master.findByIdAndUpdate(req.user.id, {$push : {positions : newPosition._id}}, {new : true})
         result.push(newPosition)

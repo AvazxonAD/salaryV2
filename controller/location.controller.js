@@ -21,10 +21,18 @@ exports.createLocation = asyncHandler(async (req, res, next) => {
         }
     }
     for(let location of locations){
+        const now = new Date();
+        // Hozirgi yil, oy va kunni olish
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0'); // Oylarda 0 dan boshlanganligi uchun 1 qo'shamiz
+        const day = String(now.getDate()).padStart(2, '0');
+        const createDate = `${year}-${month}-${day}`;
+
         const newLocation = await Location.create({
             name : location.name,
             type : location.type,
-            parent : req.user.id
+            parent : req.user.id,
+            date : createDate
         })
         await Master.findByIdAndUpdate(req.user.id, {$push : {locations : newLocation._id}})
         result.push(newLocation)
