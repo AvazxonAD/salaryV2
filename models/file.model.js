@@ -47,7 +47,14 @@ const fileSchema = new mongoose.Schema({
         required : true,
         trim : true
     },
-    parent : mongoose.Schema.Types.ObjectId
+    parent : {
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "Folder"
+    },
+    parentMaster : {
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "Master"
+    }
 }, {timestamps : true})
 
 module.exports = mongoose.model("File", fileSchema)

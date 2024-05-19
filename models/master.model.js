@@ -42,6 +42,10 @@ const masterSchema = new mongoose.Schema({
     folders : [{
         type : mongoose.Schema.Types.ObjectId,
         ref : "Folder"
+    }],
+    files : [{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "File"
     }]
 }, {timestamps : true})
 
