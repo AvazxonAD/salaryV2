@@ -34,11 +34,12 @@ exports.getAllRank =asyncHandler(async (req, res, next) => {
 })
 // delete ranks
 exports.deleteRank = asyncHandler(async (req, res, next) => {
-    const rank = await Rank.findByIdAndDelete(req.params.id)
-    if(!rank){
-        return next(new ErrorResponse("Unvon topilmadi", 403))
-    }
-    const master = await Master.updateMany({$pull : {ranks : req.params.id}}, {new : true})
-    if(master)
+    const rank = await Rank.findById(req.params.id)
+    const master = await Master.updateMany(
+        { ranks: rank.id },  // Qidiruv mezonlari
+        { $pull: { ranks: rank.id } }  // Yangilanish operatsiyasi
+    );
+    await rank.deleteOne()
+
     return res.status(200).json({success : true, data : "Delete"})
 })
