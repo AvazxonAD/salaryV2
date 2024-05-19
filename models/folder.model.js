@@ -19,13 +19,8 @@ const FolderSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Table'
     }],
-    parentHead: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref : "Master"
-    },
     parent : {
         type: mongoose.Schema.Types.ObjectId,
-        ref : "Folder"
     }
 });
 

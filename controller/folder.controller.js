@@ -4,10 +4,11 @@ const Folder = require('../models/folder.model')
 const Master = require('../models/master.model')
 //create new folder 
 exports.createFolder = asyncHandler(async (req, res, next) => {
-    parent = null 
+    parent = null
     const {name} = req.body
     const folder = await Folder.findById(req.params.id)
     parent = folder 
+    
     if(!parent){
         const master = await  Master.findById(req.params.id)
         parent = master
@@ -19,7 +20,9 @@ exports.createFolder = asyncHandler(async (req, res, next) => {
     if(test){
         return next(new ErrorResponse(`Bu bolimdan bunday nomli bolim mavjud : ${test.name}`))
     }
+
     const newFolder = await Folder.create({name, parent : parent._id})
+    console.log(newFolder)
     parent.folders.push(newFolder._id)
     await parent.save()
     return res.status(200).json({ success : true, data : newFolder})

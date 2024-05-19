@@ -46,5 +46,10 @@ const fileSchema = new mongoose.Schema({
         type : String,
         required : true,
         trim : true
-    }
-})
+    },
+    parent : mongoose.Schema.Types.ObjectId
+}, {timestamps : true})
+
+module.exports = mongoose.model("File", fileSchema)
+
+
