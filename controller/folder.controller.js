@@ -22,7 +22,6 @@ exports.createFolder = asyncHandler(async (req, res, next) => {
     }
 
     const newFolder = await Folder.create({name, parent : parent._id})
-    console.log(newFolder)
     parent.folders.push(newFolder._id)
     await parent.save()
     return res.status(200).json({ success : true, data : newFolder})

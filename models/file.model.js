@@ -42,7 +42,7 @@ const fileSchema = new mongoose.Schema({
         required : true,
         trim : true
     },
-    budget : {
+    selectBudget : {
         type : String,
         required : true,
         trim : true
